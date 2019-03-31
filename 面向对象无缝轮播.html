@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <meta name="keywords" content="关键词">
+        <meta name="description" content="描述">
+        <meta name="author" content="LY">
+        <style>
+            body{font-family: "Microsoft YaHei",serif;}
+            body,dl,dd,p,h1,h2,h3,h4,h5,h6{margin:0;}
+            ol,ul,li{margin:0;padding:0;list-style:none;}
+            img{border:none;}
+            #wrap{
+                position:relative;
+                user-select: none;
+                overflow: hidden;
+                width:600px;
+                height:350px;
+                margin:50px auto;
+                border:1px solid #000;
+            }
+            #wrap ul.img{
+                position:absolute;
+                left:-100%;
+                width:1000%;
+                height:300px;
+                /*transition: .5s;*/
+            }
+            #wrap ul.img li{
+                float:left;
+                width:10%;
+                height:100%;
+            }
+            #wrap ul.img li>img{
+                width:100%;
+                height:100%;
+            }
+            #wrap ul.tab{
+                position: absolute;
+                bottom:0;
+                width:100%;
+                height:50px;
+                line-height: 50px;
+            }
+            #wrap ul.tab li{
+                float:left;
+                width:20%;
+                height:100%;
+                background-color: #000;
+                /*border:1px solid #ff0036;*/
+                /*box-sizing: border-box;*/
+                text-align: center;
+                color:#fff;
+                cursor: pointer;
+            }
+            #wrap ul.tab li.active{
+                background-color: #999999;
+                color:#43c052;
+            }
+            #wrap div.btn div.pre{
+                position: absolute;
+                left:-25px;
+                top:0;
+                bottom:0;
+                margin:auto;
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                line-height: 50px;
+                text-indent:27px;
+                color:#fff;
+                background-color: black;
+            }
+            #wrap div.btn div.next{
+                position: absolute;
+                right:-25px;
+                top:0;
+                bottom:0;
+                margin:auto;
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                line-height: 50px;
+                text-indent: 13px;
+                color:#fff;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <ul class="img" style="transition-duration: 0.5s">
+                <li><img src="images/12.jpg" alt=""></li>
+                <li><img src="images/7.jpg" alt=""></li>
+                <li><img src="images/8.jpg" alt=""></li>
+                <li><img src="images/10.jpg" alt=""></li>
+                <li><img src="images/11.jpg" alt=""></li>
+                <li><img src="images/12.jpg" alt=""></li>
+                <li><img src="images/7.jpg" alt=""></li>
+            </ul>
+            <ul class="tab">
+                <li class="active">1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+            </ul>
+            <div class="btn">
+                <div class="pre"> < </div>
+                <div class="next"> > </div>
+            </div>
+        </div>
+
+        <script>
+            (function() {
+
+                //封装轮播图类
+                class Tab{
+                    //构造函数，私有属性
+                    constructor({ul,tabli,tabclass="active",pre,next}){
+                        this.ul = ul;
+                        this.tabli = tabli;
+                        this.tabclass = tabclass;
+                        this.pre = pre;
+                        this.next = next;
+                        this.length = this.tabli.length;
+                        this.index1 = 0;
+                        this.timer = null;
+                        this.wrap = document.getElementById("wrap");
+                        this.click();
+                        this.addtimer();
+                        this.autoplay();
+                        this.pre1();
+                        this.next1();
+                    };
+
+                    //选项卡的点击事件
+                    click(){
+                        [...this.tabli].forEach((ele,index)=>{
+                            ele.onclick = function(){
+                                this.change(index);
+                            }.bind(this);
+                        });
+                    };
+
+                    //切换图片时的样式改变
+                    change(i){
+                        this.ul.style.transition = "0.5s";
+                        if( this.index1 === i )return;
+                        this.tabli[this.index1].classList.remove(this.tabclass);
+                        this.index1 = i;
+                        this.ul.style.left = -1*(this.index1*100+100)+"%";
+                        if( this.index1 === -1 ){
+                            setTimeout(function () {
+                                this.ul.style.transition = "0s";
+                                this.ul.style.left = -1*((this.length-1)*100+100)+"%";
+                            }.bind(this),500);
+                            this.index1 = this.length-1;
+                        }else if( this.index1 === this.length ){
+                            this.index1 = 0;
+                            setTimeout(function () {
+                                this.ul.style.transition = "0s";
+                                this.ul.style.left = "-100%";
+                            }.bind(this),500)
+                        }
+
+                        this.tabli[this.index1].classList.add(this.tabclass);
+
+                    };
+
+                    //自动轮播事件
+                    autoplay(){
+                        this.timer = setInterval(()=>{
+                            let i = this.index1;
+                            i++;
+                            this.change(i);
+                        },2000)
+                    };
+
+                    //添加和清除轮播定时器
+                    addtimer(){
+                        this.wrap.onmouseenter = ()=>{
+                            clearInterval(this.timer);
+                        };
+                        this.wrap.onmouseleave = ()=>{
+                            this.autoplay();
+                        };
+                    }
+
+                    //pre按钮的点击事件
+                    pre1(){
+                        this.pre.onclick = ()=>{
+                            let i = this.index1;
+                            i--;
+                            this.change(i);
+
+                        };
+                    };
+
+                    //next按钮的点击事件
+                    next1(){
+                        this.next.onclick = ()=>{
+                            let i = this.index1;
+                            i++;
+                            this.change(i);
+                        };
+                    }
+                };
+
+                //实例化一个轮播图对象
+                new Tab({
+                    ul: document.querySelector("#wrap .img"),
+                    tabli:document.querySelectorAll("#wrap .tab li"),
+                    pre:document.querySelector("#wrap .btn .pre"),
+                    next:document.querySelector("#wrap .btn .next")
+                });
+
+            })();
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

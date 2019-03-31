@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <meta name="keywords" content="关键词">
+        <meta name="description" content="描述">
+        <meta name="author" content="LY">
+        <style>
+            body{font-family: "Microsoft YaHei",serif;}
+            body,dl,dd,p,h1,h2,h3,h4,h5,h6{margin:0;}
+            ol,ul,li{margin:0;padding:0;list-style:none;}
+            img{border:none;}
+            #wrap{
+                position:relative;
+                user-select: none;
+                overflow: hidden;
+                width:600px;
+                height:350px;
+                margin:50px auto;
+                border:1px solid #000;
+            }
+            #wrap ul.img{
+                position:absolute;
+                left:-100%;
+                width:1000%;
+                height:300px;
+                /*transition: .5s;*/
+            }
+            #wrap ul.img li{
+                float:left;
+                width:10%;
+                height:100%;
+            }
+            #wrap ul.img li>img{
+                width:100%;
+                height:100%;
+            }
+            #wrap ul.tab{
+                position: absolute;
+                bottom:0;
+                width:100%;
+                height:50px;
+                line-height: 50px;
+            }
+            #wrap ul.tab li{
+                float:left;
+                width:20%;
+                height:100%;
+                background-color: #000;
+                /*border:1px solid #ff0036;*/
+                /*box-sizing: border-box;*/
+                text-align: center;
+                color:#fff;
+                cursor: pointer;
+            }
+            #wrap ul.tab li.active{
+                background-color: #999999;
+                color:#43c052;
+            }
+            #wrap div.btn div.pre{
+                position: absolute;
+                left:-25px;
+                top:0;
+                bottom:0;
+                margin:auto;
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                line-height: 50px;
+                text-indent:27px;
+                color:#fff;
+                background-color: black;
+            }
+            #wrap div.btn div.next{
+                position: absolute;
+                right:-25px;
+                top:0;
+                bottom:0;
+                margin:auto;
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                line-height: 50px;
+                text-indent: 13px;
+                color:#fff;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <ul class="img" style="transition-duration: 0.5s">
+                <li><img src="images/12.jpg" alt=""></li>
+                <li><img src="images/7.jpg" alt=""></li>
+                <li><img src="images/8.jpg" alt=""></li>
+                <li><img src="images/10.jpg" alt=""></li>
+                <li><img src="images/11.jpg" alt=""></li>
+                <li><img src="images/12.jpg" alt=""></li>
+                <li><img src="images/7.jpg" alt=""></li>
+            </ul>
+            <ul class="tab">
+                <li class="active">1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+            </ul>
+            <div class="btn">
+                <div class="pre"> < </div>
+                <div class="next"> > </div>
+            </div>
+        </div>
+        
+        <script>
+            let oWrap = document.getElementById("wrap"),
+                oImg = document.querySelector("#wrap ul.img"),
+                aTab = document.querySelectorAll("#wrap ul.tab li"),
+                oPre = document.querySelector("#wrap div.btn div.pre"),
+                oNext = document.querySelector("#wrap div.btn div.next"),
+                lastindex=0,
+                len = aTab.length,
+                x=null;
+
+            [...aTab].forEach(function (dom,index) {
+                dom.onclick =function(){
+                    if(index===lastindex)return;
+
+                    aTab[lastindex].classList.remove("active");
+                    lastindex =index;
+                    aTab[index].classList.add("active");
+
+                    oImg.style.left = `${(-1)*(index+1)*100}%`;
+                }
+            })
+
+            function fn() {
+
+                aTab[lastindex].classList.remove("active");
+                lastindex ++;
+                lastindex=(lastindex+len)%len;
+                aTab[lastindex].classList.add("active");
+
+                oImg.style.left = `${(-1)*(lastindex+1)*100}%`;
+
+            };
+
+            x = setInterval(fn,2000);
+
+            oWrap.onmouseenter = function(){
+                clearInterval(x);
+            }
+
+            oWrap.onmouseleave = function(){
+                x=setInterval(fn,2000);
+            }
+
+            oPre.onclick=function(){
+                if( lastindex===0 ){
+                    oImg.style.transitionDuration="0.0s";
+                    oImg.style.left = `-600%`;
+                    setTimeout(function(){
+                        oImg.style.transition=".5s";
+                        lastindex=4;
+                        oImg.style.left = `-500%`;
+                        aTab[0].classList.remove("active");
+                        aTab[4].classList.add("active");
+                    },16.6);
+                    return;
+                }else {
+                    aTab[lastindex].classList.remove("active");
+                    lastindex--;
+                    lastindex = (lastindex + len) % len;
+                    aTab[lastindex].classList.add("active");
+
+                    oImg.style.left = `${(-1) * (lastindex+1) * 100}%`;
+                }
+            }
+            oNext.onclick=function(){
+                if( lastindex===4 ){
+                    oImg.style.transitionDuration="0.0s";
+                    oImg.style.left = `0%`;
+                    setTimeout(function(){
+                        oImg.style.transition=".5s";
+                        lastindex=0;
+                        oImg.style.left = `-100%`;
+                        aTab[4].classList.remove("active");
+                        aTab[lastindex].classList.add("active");
+                    },16.6);
+                    return;
+                }else {
+
+                    aTab[lastindex].classList.remove("active");
+                    lastindex++;
+                    lastindex = (lastindex + len) % len;
+                    aTab[lastindex].classList.add("active");
+
+                    oImg.style.left = `${(-1) * (lastindex+1) * 100}%`;
+                }
+            }
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
